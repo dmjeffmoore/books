@@ -1,29 +1,38 @@
-import React, { Component } from 'react';
-import { TabMenu } from 'primereact/tabmenu';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Card } from 'primereact/card';
 
-class Home extends Component {
 
-    constructor(props) {
-        super(props);
+function Home() {
 
-        this.state = {
-            tabItems: [
-                {label: 'Browse', icon: 'pi pi-fw pi-info-circle'},
-                {label: 'Search', icon: 'pi pi-fw pi-search'}
-            ],
-            activeTab: {}
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        const fetchBooks = async () => {
+            const result = await axios("http://localhost:8080/api/v1/books");
+            let books = [];
+            for (let i = 0; i < result.data.length; i++) {
+                let o = {};
+                o[i] = result.data[i];
+                books.push(o)
+            }
+            setBooks(books);
+            console.log(books);
         };
-    }
+        fetchBooks();
+    }, []);
 
-    render() {
-        return (
-            <div>
-                <TabMenu model={this.state.tabItems} activeItem={this.state.activeTab} onTabChange={(e) => this.setState({activeTab: e.value})}/>
-
-
-            </div>
-        );
-    }
+    return(
+        <div>
+            {books.map((book, i) =>
+                <Card key={book[i].id} title={book[i].title}>
+                    {book[i].author}
+                    <br/>
+                    {book[i].isbn}
+                </Card>
+            )}
+        </div>
+    )
 }
 
 export default Home;
