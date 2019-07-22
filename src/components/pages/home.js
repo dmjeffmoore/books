@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card } from 'primereact/card';
+import { Button } from 'primereact/button'
+import { Message } from "primereact/message";
 
 
 function Home() {
@@ -24,13 +26,26 @@ function Home() {
 
     return(
         <div>
-            {books.map((book, i) =>
-                <Card key={book[i].id} title={book[i].title}>
-                    {book[i].author}
-                    <br/>
-                    {book[i].isbn}
-                </Card>
-            )}
+            <h1>Books</h1>
+            <br/>
+            <div className="p-grid">
+                {books.map((book, i) =>
+                    <div className="p-col">
+                        <Card key={book[i].id}
+                              title={book[i].title.substring(0, 18)}
+                              subTitle={book[i].author.substring(0, 22)}
+                              style={{ width: "250px", height: "530px" }}
+                              header={<img src={"http://covers.openlibrary.org/b/isbn/" + book[i].isbn + "-L.jpg"}
+                                           alt={book[i].title}
+                                           height="380px"/>}>
+                            ISBN: {book[i].isbn}
+                            <br/>
+                            {book[i].status === "ON_SHELF" && <Button label="Checkout"/>}
+                            {book[i].status === "CHECKED_OUT" && <Message severity="warn" text="Checked Out"/>}
+                        </Card>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
