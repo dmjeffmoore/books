@@ -40,7 +40,13 @@ function Home() {
                                            height="380px"/>}>
                             ISBN: {book[i].isbn}
                             <br/>
-                            {book[i].status === "ON_SHELF" && <Button label="Checkout"/>}
+                            {book[i].status === "ON_SHELF" && <Button label="Checkout" onClick={() => {
+                                axios.put("http://localhost:8080/api/v1/books/" + book[i].isbn + "/checkout")
+                                    .then(() => {
+                                        book[i].status = "CHECKED_OUT";
+                                        setBooks(currentBooks => ([...currentBooks]));
+                                    });
+                            }}/>}
                             {book[i].status === "CHECKED_OUT" && <Message severity="warn" text="Checked Out"/>}
                         </Card>
                     </div>
