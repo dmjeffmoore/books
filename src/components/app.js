@@ -5,7 +5,6 @@ import { Security, ImplicitCallback } from '@okta/okta-react';
 
 import Home from './pages/home';
 import NotFound from './pages/notFound';
-import Menu from './menu';
 
 const config = {
     issuer: process.env.ISSUER,
@@ -17,13 +16,13 @@ const config = {
 function App() {
     return(
         <Router>
-                <Switch>
-                    <Security {...config}>
-                        <Menu />
-                        <Route exact path="/" component={Home} />
-                        <Route path="/implicit/callback" component={ImplicitCallback}/>
-                    </Security>
-                </Switch>
+            <Switch>
+                <Security {...config}>
+                    <Route exact path="/" component={Home}/>
+                    <Route path="/implicit/callback" component={ImplicitCallback}/>
+                    <Route path="*" component={NotFound}/>
+                </Security>
+            </Switch>
         </Router>
     )
 }

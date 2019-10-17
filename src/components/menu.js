@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { withAuth } from '@okta/okta-react';
+
 import { MegaMenu } from "primereact/megamenu";
 import { Button } from "primereact/button";
-import { withAuth } from '@okta/okta-react';
 
 import { useAuth } from "./auth";
 
@@ -15,8 +16,8 @@ const Menu = withAuth(({ auth }) => {
             items: [[{
                 items: [
                     {
-                        label: 'Return Books', command: () => {
-
+                        label: 'Checked Out Books', command: () => {
+                            // TODO
                         }
                     },
                     {
