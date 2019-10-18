@@ -6,14 +6,17 @@ import { Card } from 'primereact/card';
 import { Button } from 'primereact/button'
 import { Message } from "primereact/message";
 import { Growl } from 'primereact/growl';
+import {Dialog} from "primereact/dialog";
+import {MegaMenu} from "primereact/megamenu";
 
-import Menu from "../menu";
 import {useAuth} from "../auth";
 
 const Home = withAuth(({ auth }) => {
 
     const [authenticated, user] = useAuth(auth);
     const [books, setBooks] = useState([]);
+    const [isDialogVisible, showDialog] = useState(false);
+
     let growl = new Growl();
 
     useEffect(() => {
@@ -43,9 +46,58 @@ const Home = withAuth(({ auth }) => {
         }
     }
 
+    async function returnBook(book, i) {
+        axios.put("http://localhost:8080/api/v1/books/" + book[i].isbn + "/return")
+            .then(() => {
+                book[i].status = "ON_SHELF";
+                book[i].checkedOutBy = "";
+                setBooks(currentBooks => ([...currentBooks]));
+            });
+    }
+
+    const menuItems = [
+        {
+            label: user != null ? user.given_name : "", icon: 'pi pi-fw pi-cog',
+            items: [[{
+                items: [
+                    {
+                        label: 'Checked Out Books', command: async () => {
+                            showDialog(true);
+                        }
+                    },
+                    {
+                        label: 'Logout', command: () => {
+                            auth.logout("/");
+                        }
+                    }
+                ]
+            }]]
+        },
+    ];
+
     return(
         <div>
-            <Menu/>
+            <div>
+                <Dialog header="Checked Out Books" visible={isDialogVisible} style={{width: '60vw'}} modal={true} onHide={() => showDialog(false)}>
+                    {books.map((book, i) =>
+                        user && book[i].checkedOutBy === user.email &&
+                        <p key={book[i].id}>
+                            Title: <b>{book[i].title}</b>
+                            <br/>
+                            Author: {book[i].author}
+                            <br/>
+                            ISBN: {book[i].isbn}
+                            <br/>
+                            <Button label="Return" onClick={() => returnBook(book, i)}/>
+                        </p>
+                    )}
+                </Dialog>
+                {authenticated ? (
+                    <MegaMenu model={menuItems} orientation="horizontal" style={{float: "right", marginRight: "80px"}}/>
+                ) : (
+                    <Button label="Login" onClick={() => auth.login("/")} style={{float: "right", marginRight: "80px"}}/>
+                )}
+            </div>
             <Growl ref={(el) => growl = el} />
             <h1>Books</h1>
             <br/>

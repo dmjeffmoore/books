@@ -4,12 +4,11 @@ import { Switch } from 'react-router-dom';
 import { Security, ImplicitCallback } from '@okta/okta-react';
 
 import Home from './pages/home';
-import NotFound from './pages/notFound';
 
 const config = {
-    issuer: process.env.ISSUER,
+    issuer: process.env.REACT_APP_OIDC_ISSUER,
     redirectUri: window.location.origin + '/implicit/callback',
-    clientId: process.env.CLIENT_ID,
+    clientId: process.env.REACT_APP_OIDC_CLIENT_ID,
     pkce: true
 };
 
@@ -20,7 +19,6 @@ function App() {
                 <Security {...config}>
                     <Route exact path="/" component={Home}/>
                     <Route path="/implicit/callback" component={ImplicitCallback}/>
-                    <Route path="*" component={NotFound}/>
                 </Security>
             </Switch>
         </Router>
