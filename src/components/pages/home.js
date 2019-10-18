@@ -46,7 +46,7 @@ const Home = withAuth(({ auth }) => {
         }
     }
 
-    async function returnBook(book, i) {
+    function returnBook(book, i) {
         axios.put("http://localhost:8080/api/v1/books/" + book[i].isbn + "/return")
             .then(() => {
                 book[i].status = "ON_SHELF";
@@ -61,7 +61,7 @@ const Home = withAuth(({ auth }) => {
             items: [[{
                 items: [
                     {
-                        label: 'Checked Out Books', command: async () => {
+                        label: 'Checked Out Books', command: () => {
                             showDialog(true);
                         }
                     },
